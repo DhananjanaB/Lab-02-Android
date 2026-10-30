@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Activity is being created");
 
         ConstraintLayout mainLayout = findViewById(R.id.mainLayout);
+        EditText editUsername = findViewById(R.id.editUsername);
         Button btnSave = findViewById(R.id.btnSave);
 
         btnSave.setBackgroundColor(COLOR_NORMAL);
@@ -57,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
             params.topMargin = 48;
 
             mainLayout.addView(result, params);
+
+            String userName = editUsername.getText().toString().trim();
+
+            if (userName.isEmpty()) {
+                userName = "Student";
+            }
+
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    DashboardActivity.class
+            );
+
+            intent.putExtra("USER_NAME", userName);
+
+            startActivity(intent);
         });
     }
 
