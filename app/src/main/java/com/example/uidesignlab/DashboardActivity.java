@@ -14,6 +14,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "LifecycleTracker";
@@ -36,6 +42,31 @@ public class DashboardActivity extends AppCompatActivity {
         TextView txtUserName = findViewById(R.id.txtUserName);
 
         txtUserName.setText(getString(R.string.hello_user, userName));
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+        recyclerView.setLayoutManager(
+                new LinearLayoutManager(this)
+        );
+
+        List<String> items = new ArrayList<>();
+
+        items.add("Activity");
+        items.add("Service");
+        items.add("Broadcast Receiver");
+        items.add("Content Provider");
+        items.add("Intent");
+        items.add("Fragment");
+        items.add("View");
+        items.add("Layout");
+        items.add("Manifest");
+        items.add("Adapter");
+        items.add("RecyclerView");
+        items.add("Menu");
+
+        MyAdapter myAdapter = new MyAdapter(items);
+
+        recyclerView.setAdapter(myAdapter);
     }
 
     @Override
