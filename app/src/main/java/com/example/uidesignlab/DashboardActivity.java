@@ -20,6 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.widget.Button;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "LifecycleTracker";
@@ -67,6 +71,18 @@ public class DashboardActivity extends AppCompatActivity {
         MyAdapter myAdapter = new MyAdapter(items);
 
         recyclerView.setAdapter(myAdapter);
+
+        Button btnWebsite = findViewById(R.id.btnWebsite);
+
+        btnWebsite.setOnClickListener(v -> {
+
+            Intent browserIntent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.google.com")
+            );
+
+            startActivity(browserIntent);
+        });
     }
 
     @Override
