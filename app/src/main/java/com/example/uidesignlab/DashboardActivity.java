@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.view.Menu;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -29,6 +30,14 @@ public class DashboardActivity extends AppCompatActivity {
         TextView txtUserName = findViewById(R.id.txtUserName);
 
         txtUserName.setText(getString(R.string.hello_user, userName));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.dashboard_menu, menu);
+
+        return true;
     }
 
     @Override
