@@ -8,6 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "LifecycleTracker";
@@ -38,6 +44,32 @@ public class DashboardActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.dashboard_menu, menu);
 
         return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+
+            Toast.makeText(this, "Settings clicked",
+                    Toast.LENGTH_SHORT).show();
+
+            return true;
+
+        } else if (id == R.id.action_logout) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("Yes", (dialog, which) -> finish())
+                    .setNegativeButton("No", null)
+                    .show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
