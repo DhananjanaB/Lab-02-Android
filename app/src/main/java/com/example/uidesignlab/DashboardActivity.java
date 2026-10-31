@@ -1,3 +1,4 @@
+
 package com.example.uidesignlab;
 
 import android.os.Bundle;
@@ -7,7 +8,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
-
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -35,17 +35,31 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         Log.d(TAG, "Dashboard onCreate");
+
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
         setTitle(R.string.dashboard_title);
 
+
         String userName = getIntent().getStringExtra("USER_NAME");
+
+        if (userName == null) {
+            userName = "Student";
+        }
 
         TextView txtUserName = findViewById(R.id.txtUserName);
 
         txtUserName.setText(getString(R.string.hello_user, userName));
+
+
+        int userAge = getIntent().getIntExtra("USER_AGE", 0);
+
+        TextView txtUserAge = findViewById(R.id.txtUserAge);
+
+        txtUserAge.setText("Age: " + userAge);
+
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
@@ -67,21 +81,20 @@ public class DashboardActivity extends AppCompatActivity {
         items.add("Adapter");
         items.add("RecyclerView");
         items.add("Menu");
+        items.add("Mobile Application Development");
+        items.add("Database Management");
+        items.add("Web Development");
 
         MyAdapter myAdapter = new MyAdapter(items);
 
         recyclerView.setAdapter(myAdapter);
 
-        Button btnWebsite = findViewById(R.id.btnWebsite);
 
-        btnWebsite.setOnClickListener(v -> {
+        Button btnDialer = findViewById(R.id.btnDialer);
 
-            Intent browserIntent = new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.google.com")
-            );
-
-            startActivity(browserIntent);
+        btnDialer.setOnClickListener(v -> {
+            Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+            startActivity(dialIntent);
         });
     }
 
@@ -92,6 +105,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -111,6 +125,16 @@ public class DashboardActivity extends AppCompatActivity {
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("Yes", (dialog, which) -> finish())
                     .setNegativeButton("No", null)
+                    .show();
+
+            return true;
+
+        } else if (id == R.id.action_about) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("About")
+                    .setMessage("This is my Mobile Application Development Lab 03 app.")
+                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                     .show();
 
             return true;

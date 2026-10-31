@@ -1,3 +1,4 @@
+
 package com.example.uidesignlab;
 
 import android.graphics.Color;
@@ -18,9 +19,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class MainActivity extends AppCompatActivity {
+
     private static final String TAG = "LifecycleTracker";
     private static final int COLOR_NORMAL = Color.parseColor("#6200EE");
     private static final int COLOR_PRESSED = Color.parseColor("#FF9800");
+
     private ToneGenerator toneGenerator;
 
     @Override
@@ -31,15 +34,22 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Activity is being created");
 
         ConstraintLayout mainLayout = findViewById(R.id.mainLayout);
+
         EditText editUsername = findViewById(R.id.editUsername);
+        EditText editAge = findViewById(R.id.editAge);
+
         Button btnSave = findViewById(R.id.btnSave);
 
         btnSave.setBackgroundColor(COLOR_NORMAL);
+
         toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
         btnSave.setOnClickListener(v -> {
+
             Toast.makeText(this, "Processing...", Toast.LENGTH_SHORT).show();
+
             btnSave.setBackgroundColor(COLOR_PRESSED);
+
             new Handler(Looper.getMainLooper()).postDelayed(
                     () -> btnSave.setBackgroundColor(COLOR_NORMAL), 1000);
 
@@ -54,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT);
+
             params.topToBottom = R.id.editUsername;
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
@@ -67,12 +78,24 @@ public class MainActivity extends AppCompatActivity {
                 userName = "Student";
             }
 
+            // Get age from EditText
+            String ageText = editAge.getText().toString().trim();
+
+            int age = 0;
+
+            if (!ageText.isEmpty()) {
+                age = Integer.parseInt(ageText);
+            }
+
+            // Create Explicit Intent
             Intent intent = new Intent(
                     MainActivity.this,
                     DashboardActivity.class
             );
 
+            // Send username and age
             intent.putExtra("USER_NAME", userName);
+            intent.putExtra("USER_AGE", age);
 
             startActivity(intent);
         });
@@ -106,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: Activity is being destroyed");
+
         if (toneGenerator != null) {
             toneGenerator.release();
         }

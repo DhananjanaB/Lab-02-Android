@@ -9,6 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import android.widget.Toast;
+
+import android.widget.Toast;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
@@ -41,11 +44,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return new MyViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(
             @NonNull MyViewHolder holder, int position) {
 
         holder.txtItem.setText(items.get(position));
+
+        holder.itemView.setOnClickListener(v -> {
+            Toast.makeText(
+                    v.getContext(),
+                    items.get(position),
+                    Toast.LENGTH_SHORT
+            ).show();
+        });
     }
 
     @Override
