@@ -1,4 +1,3 @@
-
 package com.example.uidesignlab;
 
 import android.graphics.Color;
@@ -18,9 +17,16 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.SharedPreferences;
+import android.widget.CheckBox;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "LifecycleTracker";
+
+    public static final String PREFS_NAME = "UserPrefs";
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_REMEMBER = "remember";
     private static final int COLOR_NORMAL = Color.parseColor("#6200EE");
     private static final int COLOR_PRESSED = Color.parseColor("#FF9800");
 
@@ -37,6 +43,19 @@ public class MainActivity extends AppCompatActivity {
 
         EditText editUsername = findViewById(R.id.editUsername);
         EditText editAge = findViewById(R.id.editAge);
+
+        CheckBox chkRemember = findViewById(R.id.chkRemember);
+
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        // Load saved username
+        boolean remember = prefs.getBoolean(KEY_REMEMBER, false);
+
+        chkRemember.setChecked(remember);
+
+        if (remember) {
+            editUsername.setText(prefs.getString(KEY_USERNAME, ""));
+        }
 
         Button btnSave = findViewById(R.id.btnSave);
 
@@ -65,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT);
 
-            params.topToBottom = R.id.editUsername;
+            params.topToBottom = R.id.chkRemember;
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
             params.topMargin = 48;
@@ -87,6 +106,18 @@ public class MainActivity extends AppCompatActivity {
                 age = Integer.parseInt(ageText);
             }
 
+            // Save username using SharedPreferences
+            SharedPreferences.Editor editor = prefs.edit();
+
+            if (chkRemember.isChecked()) {
+                editor.putString(KEY_USERNAME, userName);
+                editor.putBoolean(KEY_REMEMBER, true);
+            } else {
+                editor.remove(KEY_USERNAME);
+                editor.putBoolean(KEY_REMEMBER, false);
+            }
+
+            editor.apply();
             // Create Explicit Intent
             Intent intent = new Intent(
                     MainActivity.this,

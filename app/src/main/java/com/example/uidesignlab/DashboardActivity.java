@@ -28,10 +28,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.Fragment;
 
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import android.content.Intent;
+
 public class DashboardActivity extends AppCompatActivity
         implements HeaderFragment.OnHeaderInteractionListener {
 
     private static final String TAG = "LifecycleTracker";
+
+    private static final String STORAGE_TAG = "StorageLab";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,26 @@ public class DashboardActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
+
+        // Count Dashboard visits
+        if (savedInstanceState == null) {
+
+            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+
+            int visits = prefs.getInt("visit_count", 0) + 1;
+
+            SharedPreferences.Editor editor = prefs.edit();
+
+            editor.putInt("visit_count", visits);
+
+            boolean saved = editor.commit();
+
+            Log.d(STORAGE_TAG, "Visit count saved: " + saved + " (" + visits + ")");
+
+            Toast.makeText(this,
+                    getString(R.string.visit_count, visits),
+                    Toast.LENGTH_SHORT).show();
+        }
 
         setTitle(R.string.dashboard_title);
 
@@ -127,6 +154,17 @@ public class DashboardActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
+
+        if (id == R.id.action_notes) {
+
+            Intent intent = new Intent(this, NotesActivity.class);
+
+            startActivity(intent);
+
+            return true;
+        }
+
+
         if (id == R.id.action_settings) {
 
             Toast.makeText(this, "Settings clicked",
@@ -139,7 +177,15 @@ public class DashboardActivity extends AppCompatActivity
             new AlertDialog.Builder(this)
                     .setTitle("Logout")
                     .setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("Yes", (dialog, which) -> finish())
+                    .setPositiveButton("Yes", (dialog, which) -> {
+
+                        getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE)
+                                .edit()
+                                .clear()
+                                .apply();
+
+                        finish();
+                    })
                     .setNegativeButton("No", null)
                     .show();
 

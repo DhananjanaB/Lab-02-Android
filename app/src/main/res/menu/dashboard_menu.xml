@@ -23,4 +23,11 @@
         android:title="@string/menu_swap"
         app:showAsAction="never" />
 
+
+    <item
+        android:id="@+id/action_notes"
+        android:title="@string/menu_notes"
+        app:showAsAction="never" />
+
+
 </menu>
