@@ -24,6 +24,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Button;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "LifecycleTracker";
@@ -42,7 +46,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         setTitle(R.string.dashboard_title);
 
-
         String userName = getIntent().getStringExtra("USER_NAME");
 
         if (userName == null) {
@@ -53,13 +56,11 @@ public class DashboardActivity extends AppCompatActivity {
 
         txtUserName.setText(getString(R.string.hello_user, userName));
 
-
         int userAge = getIntent().getIntExtra("USER_AGE", 0);
 
         TextView txtUserAge = findViewById(R.id.txtUserAge);
 
         txtUserAge.setText("Age: " + userAge);
-
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
@@ -89,13 +90,27 @@ public class DashboardActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(myAdapter);
 
-
         Button btnDialer = findViewById(R.id.btnDialer);
 
         btnDialer.setOnClickListener(v -> {
             Intent dialIntent = new Intent(Intent.ACTION_DIAL);
             startActivity(dialIntent);
         });
+
+        // Add DetailFragment at runtime (only the first time)
+        if (savedInstanceState == null) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            FragmentTransaction transaction =
+                    fragmentManager.beginTransaction();
+
+            DetailFragment detailFrag = new DetailFragment();
+
+            transaction.add(R.id.dynamic_fragment_container, detailFrag);
+
+            transaction.commit();
+        }
     }
 
     @Override
@@ -136,6 +151,35 @@ public class DashboardActivity extends AppCompatActivity {
                     .setMessage("This is my Mobile Application Development Lab 03 app.")
                     .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                     .show();
+
+            return true;
+
+        } else if (id == R.id.action_swap) {
+
+            // Find the currently displayed Fragment
+            Fragment current = getSupportFragmentManager()
+                    .findFragmentById(R.id.dynamic_fragment_container);
+
+            FragmentTransaction transaction =
+                    getSupportFragmentManager().beginTransaction();
+
+            // Swap DetailFragment and InfoFragment
+            if (current instanceof DetailFragment) {
+
+                transaction.replace(
+                        R.id.dynamic_fragment_container,
+                        new InfoFragment()
+                );
+
+            } else {
+
+                transaction.replace(
+                        R.id.dynamic_fragment_container,
+                        new DetailFragment()
+                );
+            }
+
+            transaction.commit();
 
             return true;
         }
