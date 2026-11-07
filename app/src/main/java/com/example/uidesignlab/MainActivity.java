@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "UserPrefs";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_REMEMBER = "remember";
+
     private static final int COLOR_NORMAL = Color.parseColor("#6200EE");
     private static final int COLOR_PRESSED = Color.parseColor("#FF9800");
 
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
         CheckBox chkRemember = findViewById(R.id.chkRemember);
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         // Load saved username
         boolean remember = prefs.getBoolean(KEY_REMEMBER, false);
@@ -76,13 +78,15 @@ public class MainActivity extends AppCompatActivity {
 
             TextView result = new TextView(this);
             result.setId(View.generateViewId());
-            result.setText("Profile Saved Successfully!");
+            result.setText("Saving profile...");
             result.setTextColor(Color.parseColor("#2E7D32"));
             result.setTextSize(18);
 
-            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            ConstraintLayout.LayoutParams params =
+                    new ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT
+                    );
 
             params.topToBottom = R.id.chkRemember;
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
@@ -118,6 +122,48 @@ public class MainActivity extends AppCompatActivity {
             }
 
             editor.apply();
+
+            // Create a final copy of username
+            final String nameToSave = userName;
+
+            // Check duplicate name and insert on background thread
+            AppDatabase.databaseExecutor.execute(() -> {
+
+                // Get database instance
+                AppDatabase db =
+                        AppDatabase.getInstance(getApplicationContext());
+
+                // Count existing users with the same name
+                int count = db.userDao().countByName(nameToSave);
+
+                if (count == 0) {
+
+                    // Insert only if name does not exist
+                    long insertedId =
+                            db.userDao().insert(new UserRecord(nameToSave));
+
+                    Log.d("RoomLab",
+                            "Inserted " + nameToSave + ", id = " + insertedId);
+
+                    runOnUiThread(() ->
+                            result.setText("Profile Saved Successfully!")
+                    );
+
+                } else {
+
+                    // Do not insert duplicate name
+                    Log.d("RoomLab",
+                            "Duplicate name found: " + nameToSave
+                                    + ". Profile not saved.");
+
+                    runOnUiThread(() ->
+                            result.setText("This name already exists!")
+                    );
+
+                }
+
+            });
+
             // Create Explicit Intent
             Intent intent = new Intent(
                     MainActivity.this,
