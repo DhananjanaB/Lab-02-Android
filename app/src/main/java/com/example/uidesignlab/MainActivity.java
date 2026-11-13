@@ -20,6 +20,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.SharedPreferences;
 import android.widget.CheckBox;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "LifecycleTracker";
@@ -125,6 +128,43 @@ public class MainActivity extends AppCompatActivity {
 
             // Create a final copy of username
             final String nameToSave = userName;
+
+            // Save profile to Firebase Realtime Database
+            DatabaseReference firebaseReference =
+                    FirebaseDatabase.getInstance().getReference("users");
+
+            String firebaseUserId = firebaseReference.push().getKey();
+
+            if (firebaseUserId != null) {
+
+                User firebaseUser = new User(nameToSave, "Student", "");
+
+                firebaseReference.child(firebaseUserId)
+                        .setValue(firebaseUser)
+                        .addOnSuccessListener(unused -> {
+                            Log.d("CloudLab",
+                                    "Profile saved to Firebase. ID = " + firebaseUserId);
+
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    "Profile saved to Firebase!",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("CloudLab",
+                                    "Firebase save failed: " + e.getMessage());
+
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    "Firebase save failed!",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
+
+            } else {
+                Log.e("CloudLab", "Failed to generate Firebase ID");
+            }
 
             // Check duplicate name and insert on background thread
             AppDatabase.databaseExecutor.execute(() -> {

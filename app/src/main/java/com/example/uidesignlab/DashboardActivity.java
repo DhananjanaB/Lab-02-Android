@@ -1,4 +1,3 @@
-
 package com.example.uidesignlab;
 
 import android.os.Bundle;
@@ -157,6 +156,19 @@ public class DashboardActivity extends AppCompatActivity
             Intent intent = new Intent(
                     DashboardActivity.this,
                     UsersActivity.class
+            );
+
+            startActivity(intent);
+
+            return true;
+        }
+
+        // Open Cloud Users screen - Firebase
+        if (id == R.id.action_cloud) {
+
+            Intent intent = new Intent(
+                    DashboardActivity.this,
+                    CloudActivity.class
             );
 
             startActivity(intent);

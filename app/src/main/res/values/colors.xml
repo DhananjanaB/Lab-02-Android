@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Custom Theme Color -->
     <color name="my_custom_color">#1565C0</color>
 
+    <!-- Fragment Background Colors -->
     <color name="header_background">#E3F2FD</color>
     <color name="detail_background">#FFF3E0</color>
 
