@@ -1,3 +1,4 @@
+
 package com.example.uidesignlab;
 
 import android.os.Bundle;
@@ -176,9 +177,23 @@ public class DashboardActivity extends AppCompatActivity
             return true;
         }
 
+        // Open Notes screen
         if (id == R.id.action_notes) {
 
             Intent intent = new Intent(this, NotesActivity.class);
+
+            startActivity(intent);
+
+            return true;
+        }
+
+        // Open Background Work screen - Lab 08
+        if (id == R.id.action_background) {
+
+            Intent intent = new Intent(
+                    DashboardActivity.this,
+                    BackgroundActivity.class
+            );
 
             startActivity(intent);
 
