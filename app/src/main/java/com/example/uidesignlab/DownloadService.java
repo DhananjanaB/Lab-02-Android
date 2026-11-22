@@ -1,3 +1,4 @@
+
 package com.example.uidesignlab;
 
 import android.app.Service;
@@ -8,6 +9,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class DownloadService extends Service {
 
     private static final String TAG = "BackgroundLab";
@@ -16,7 +20,11 @@ public class DownloadService extends Service {
     private final Handler mainHandler =
             new Handler(Looper.getMainLooper());
 
-    // Flag to control the download threads
+    // ExecutorService to manage download tasks
+    private final ExecutorService executor =
+            Executors.newSingleThreadExecutor();
+
+    // Flag to control download tasks
     private volatile boolean running = false;
 
     public DownloadService() {
@@ -46,8 +54,11 @@ public class DownloadService extends Service {
                 ).show()
         );
 
-        // Run download task on a Background Thread
-        new Thread(() -> {
+        // Execute download task using ExecutorService
+        executor.execute(() -> {
+
+            Log.d(TAG, "Download task started on: "
+                    + Thread.currentThread().getName());
 
             // Simulate download progress
             for (int i = 1; i <= 5 && running; i++) {
@@ -61,6 +72,7 @@ public class DownloadService extends Service {
                     Thread.currentThread().interrupt();
 
                     Log.d(TAG, "Download thread interrupted");
+                    Log.d(TAG, "Download stopped");
 
                     return;
                 }
@@ -89,11 +101,11 @@ public class DownloadService extends Service {
                         ).show()
                 );
 
-                // Stop the service after completing the task
+                // Stop the service after completing this start request
                 stopSelf(startId);
             }
 
-        }).start();
+        });
 
         return START_NOT_STICKY;
     }
@@ -101,8 +113,11 @@ public class DownloadService extends Service {
     @Override
     public void onDestroy() {
 
-        // Tell all download threads to stop
+        // Tell download tasks to stop
         running = false;
+
+        // Stop running and queued tasks
+        executor.shutdownNow();
 
         Log.d(TAG, "DownloadService onDestroy");
 
