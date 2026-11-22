@@ -201,9 +201,13 @@ public class BackgroundActivity extends AppCompatActivity {
                 DownloadService.class
         );
 
+        // Send file name to DownloadService
+        intent.putExtra("file_name", "lecture_notes.pdf");
+
         startService(intent);
 
         Log.d(TAG, "Download Service start requested");
+        Log.d(TAG, "File name sent: lecture_notes.pdf");
     }
 
     // Stop Download Service

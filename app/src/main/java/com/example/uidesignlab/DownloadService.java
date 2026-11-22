@@ -1,4 +1,3 @@
-
 package com.example.uidesignlab;
 
 import android.app.Service;
@@ -42,6 +41,27 @@ public class DownloadService extends Service {
 
         Log.d(TAG, "DownloadService onStartCommand, startId = " + startId);
 
+        // Get file name from Intent
+        String fileName = "Unknown file";
+
+        if (intent != null) {
+
+            String receivedFileName =
+                    intent.getStringExtra("file_name");
+
+            if (receivedFileName != null
+                    && !receivedFileName.trim().isEmpty()) {
+
+                fileName = receivedFileName;
+            }
+        }
+
+        // Make file name available to the background task
+        final String downloadFileName = fileName;
+
+        // Log received file name
+        Log.d(TAG, "File to download: " + downloadFileName);
+
         // Allow download tasks to run
         running = true;
 
@@ -59,6 +79,8 @@ public class DownloadService extends Service {
 
             Log.d(TAG, "Download task started on: "
                     + Thread.currentThread().getName());
+
+            Log.d(TAG, "Downloading file: " + downloadFileName);
 
             // Simulate download progress
             for (int i = 1; i <= 5 && running; i++) {
